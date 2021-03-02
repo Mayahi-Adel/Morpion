@@ -12,97 +12,67 @@ const tabWins = [//lignes
     [listCase[0], listCase[4], listCase[8]],
     [listCase[2], listCase[4], listCase[6]]
 ];
-let matchNul = false;
+//variable qui vérifie si le vainqueur est le joueur X
 let pX = false;
+//variable qui vérifie si le vainqueur est le joueur O
 let pO = false;
+//variable
+let nouvelle_partie = false;
+
 listCase.forEach(element => element.addEventListener('click', jouer))
+
+//variable qui swictch les joueur si elle est paire c'est le tour du X sinon c'est qu tour du 0
 let countClick = 0;
-function jouer(e) {
+
+//callBack à chaque appelée à chaque tour
+function jouer(e){
+    if(nouvelle_partie) statuMsg.removeEventListener('click', recommencer_partie)
+    //si une case n'a pas encore été jouée ou si aucun joueur n'a gagné on peut (continuer à) jouer
     if (!e.target.textContent && !pX && !pO) {
-        if (countClick % 2 == 0) {
-            e.target.textContent = 'X';
-            statuMsg.textContent = "Joueur O c'est votre tour."
-        }
-        else {
-            e.target.textContent = 'O';
-            statuMsg.textContent = "Joueur X c'est votre tour."
-        }
+        //si le nombre de de click est pair on écrit un X sinon on écrit un 0
+        e.target.textContent = countClick % 2 === 0 ? 'X' : 'O';
+        //si le nombre de click est pair alors le prochain à jouer est O sinon le prochain est X
+        statuMsg.textContent = "c'est au tour du joueur " + (countClick % 2 === 0 ? 'O' : 'X') ;
         countClick++;
     }
-    verif();
-    msgMatchNul();
-    console.log(pO);
-    console.log(pX);
+    victoire();
+    matchNul();
 }
 
-function verif() {
-    tabWins.forEach(combinaison => {        
-        if (pX || pO){
-            msgWinner();
-            statuMsg.addEventListener('click', reset);
-            return
-        }
-        pX = combinaison.every((contenu) => contenu.textContent === 'X')
-        pO = combinaison.every((contenu) => contenu.textContent === 'O')
-
-    })
-}
+//le message de la status barre s'adapte au gagnant
 function msgWinner() {
     statuMsg.textContent = (pX ? 'X' : 'O') + ' a gagné ! Cliquez ici pour rejouer.';    
 }
-
-function msgMatchNul() {
-    if (listCase.every(el => el.textContent !== '') && !pO && !pX) {
+//vérifie si un joueur à gagné
+function victoire() {
+    tabWins.forEach(combinaison => {        
+        if (pX || pO){
+            nouvelle_partie = false;
+            msgWinner();
+            statuMsg.addEventListener('click', recommencer_partie);
+            return;
+        }
+        //parcourt la liste des combinaisons gagnantes pour voir si elles contiennent toutes X ou si elle contiennent toutes O 
+        pX = combinaison.every((contenu) => contenu.textContent === 'X')
+        pO = combinaison.every((contenu) => contenu.textContent === 'O')
+    })
+}
+//en cas de match nul
+function matchNul() {
+    //on parcourt les cases
+    //si elle toutes jouée
+    //et si on n'a pas de gagnant
+    if (listCase.every(el => el.textContent !== '')){
+        nouvelle_partie = false;
         statuMsg.textContent = `Match nul. Cliquez ici pour rejouer.`;
-        matchNul = true;
+        statuMsg.addEventListener('click',recommencer_partie)
     }
 }
-function reset() {
+//si on a une victoire ou un match nul on vide le contenu des cases pour recommencer.
+function recommencer_partie(){
     listCase.forEach(el => el.textContent = '')
     pO = false;
     pX = false;
-    countClick = 0;
+    nouvelle_partie ++;
 }
-// function verif() {
-//     if (listCase[0].textContent !== '' && listCase[0].textContent === listCase[1].textContent && listCase[1].textContent === listCase[2].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[0].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[3].textContent !== '' && listCase[3].textContent === listCase[4].textContent && listCase[4].textContent === listCase[5].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[3].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[6].textContent !== '' && listCase[6].textContent === listCase[7].textContent && listCase[7].textContent === listCase[8].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[6].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[0].textContent !== '' && listCase[0].textContent === listCase[3].textContent && listCase[3].textContent === listCase[6].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[0].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[1].textContent !== '' && listCase[1].textContent === listCase[4].textContent && listCase[4].textContent === listCase[7].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[1].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[2].textContent !== '' && listCase[2].textContent === listCase[5].textContent && listCase[5].textContent === listCase[8].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[2].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[0].textContent !== '' && listCase[0].textContent === listCase[4].textContent && listCase[4].textContent === listCase[8].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[0].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
-//     else if (listCase[2].textContent !== '' && listCase[2].textContent === listCase[4].textContent && listCase[4].textContent === listCase[6].textContent) {
-//         statuMsg.textContent = `Joueur ${listCase[2].textContent} a gagné ! Cliquez pour rejouer.`;
-//         match = true;
-//     }
 
-// }
-
-// function rejouer() {
-//     if (match == true) {
-
-//         listCase.forEach(el => el.textContent = '');
-//         match = false;
-//     }
-// }
