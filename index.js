@@ -93,7 +93,7 @@ function victoire() {
 //en cas de match nul
 function matchNul() {
     //si toutes les case ont été jouée et pas de victoire
-    if (listCase.every(el => el.textContent !== '')){
+    if (listCase.every(el => el.textContent !== '') && !pX && !pO){
         nouvelle_partie = false;
         listCase.forEach(el=>el.classList.add('null'))
         statuMsg.textContent = `Match nul. Cliquez ici pour rejouer.`;
